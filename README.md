@@ -8,8 +8,6 @@ Tạo ra một trang web dự báo thời tiết tại vị trí và tìm kiếm
 
 - **HTML**
 - **CSS**
-- **Java**
-- **MySQL**
 - **JavaScript**
 
 ## 🚀 Mục Tiêu Chính
