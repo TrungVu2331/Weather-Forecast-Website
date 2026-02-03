@@ -6,6 +6,16 @@ const cors = require('cors');
 const redis = require('redis');
 const redisClient = redis.createClient();
 
+const path = require("path");
+
+app.use(express.static(path.join(__dirname, "../frontend")));
+
+app.get("/", (req, res) => {
+  res.sendFile(
+    path.join(__dirname, "../frontend/index.html")
+  );
+});
+
 app.use(cors()); // Cho phép frontend gọi từ domain khác
 app.use(express.json());
 
