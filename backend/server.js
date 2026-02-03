@@ -1,25 +1,26 @@
 const express = require('express');
 const path = require('path');
+const weatherRoutes = require('./routes/weather');
 
 const app = express();
 const PORT = 3000;
 
-// trỏ tới thư mục frontend
-const FRONTEND_PATH = path.join(__dirname, '../frontend');
+// Serve frontend
+app.use(express.static(path.join(__dirname, '../frontend')));
 
-// serve frontend
-app.use(express.static(FRONTEND_PATH));
+// API
+app.use('/weather', weatherRoutes);
 
-// health check (ALB dùng cái này)
+// Health check cho ALB
 app.get('/health', (req, res) => {
   res.status(200).send('OK');
 });
 
-// trang chủ
+// Default route
 app.get('/', (req, res) => {
-  res.sendFile(path.join(FRONTEND_PATH, 'main.html'));
+  res.sendFile(path.join(__dirname, '../frontend/main.html'));
 });
 
 app.listen(PORT, () => {
-  console.log(`🚀 Server chạy tại http://localhost:${PORT}`);
+  console.log(`🚀 Server running on port ${PORT}`);
 });
