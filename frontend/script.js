@@ -12,7 +12,7 @@ const windSpeedVal = document.getElementById('windSpeedVal');
 const feelsVal = document.getElementById('feelsVal');
 const hourlyForecastCard = document.querySelector('.hourly-forecast');
 
-const API_BASE = 'http://54.82.136.88:3000/api/weather';
+const API_BASE = '/weather';
 const days = ['Chủ Nhật', 'Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy'];
 const months = ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6', 'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'];
 const aqiList = ['Tốt', 'Vừa', 'Vừa Phải', 'Tệ', 'Rất Tệ'];
