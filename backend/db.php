@@ -2,7 +2,7 @@
 $host = "database-1.ceanzdyu1zcu.us-east-1.rds.amazonaws.com";
 $user = "admin";
 $pass = "weatherforecast";
-$db   = "weatherdb";
+$db   = "database-1";
 
 $conn = new mysqli($host, $user, $pass, $db);
 
