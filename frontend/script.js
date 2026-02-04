@@ -174,12 +174,13 @@ document.addEventListener('DOMContentLoaded', () => {
         getUserCoordinates();
     }
 });
-function saveWeather(data) {
-  fetch("/backend/add_weather.php", {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: `city=${data.name}&temperature=${data.main.temp}&humidity=${data.main.humidity}&description=${data.weather[0].description}`
-    })
-  .then(res => res.text())
-  .then(msg => console.log(msg));
-}
+fetch("/weather/save", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    city: location.name,
+    temperature: current.temp_c,
+    humidity: current.humidity,
+    description: current.condition.text
+  })
+});

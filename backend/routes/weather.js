@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 const fs = require('fs');
 const path = require('path');
-
+const db = require ('../db'); 
 //forecast
 router.get('/forecast', async (req, res) => {
     const { lat, lon } = req.query;
@@ -102,5 +102,18 @@ router.get('/geocode', async (req, res) => {
     }
 });
 
+router.post("/save", (req, res) => {
+  const { city, temperature, humidity, description } = req.body;
+
+  const sql = `
+    INSERT INTO weather (city, temperature, humidity, description)
+    VALUES (?, ?, ?, ?)
+  `;
+
+  db.query(sql, [city, temperature, humidity, description], (err) => {
+    if (err) return res.status(500).json(err);
+    res.json({ message: "Saved to RDS" });
+  });
+});
 
 module.exports = router;
