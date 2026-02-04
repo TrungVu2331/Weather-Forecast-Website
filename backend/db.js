@@ -1,10 +1,10 @@
 const mysql = require('mysql2');
 
 const db = mysql.createConnection({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
+  host: "database-1.ceanzdyu1zcu.us-east-1.rds.amazonaws.com",
+  user: "admin",
+  password: "weatherforecast",
+  database: "weatherdb",
   port: 3306
 });
 
