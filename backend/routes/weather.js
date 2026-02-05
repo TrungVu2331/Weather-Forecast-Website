@@ -6,7 +6,13 @@ const path = require('path');
 const db = require('../db');
 
 /* ================= LOG ================= */
-const logFilePath = path.join(__dirname, '..', 'logs', 'queries.log');
+const logDir = path.join(__dirname, '..', 'logs');
+const logFilePath = path.join(logDir, 'queries.log');
+
+// đảm bảo thư mục logs tồn tại
+if (!fs.existsSync(logDir)) {
+    fs.mkdirSync(logDir);
+}
 
 function logQuery(type, data, fromCache) {
     const timestamp = new Date().toISOString();
@@ -20,7 +26,7 @@ function logQuery(type, data, fromCache) {
     }
 
     fs.appendFile(logFilePath, logLine, err => {
-        if (err) console.error('Lỗi ghi log:', err);
+        if (err) console.error('❌ Lỗi ghi log:', err);
     });
 }
 
@@ -38,15 +44,14 @@ router.get('/forecast', async (req, res) => {
 
     try {
         const cached = await redisClient.get(key);
-        const dataObj = { lat: latRounded, lon: lonRounded };
+        const logData = { lat: latRounded, lon: lonRounded };
 
         if (cached) {
             console.log('→ Redis Cache HIT:', key);
-            logQuery('forecast', dataObj, true);
+            logQuery('forecast', logData, true);
             return res.json(JSON.parse(cached));
         }
 
-        // Gọi Weather API
         const response = await axios.get(
             'https://api.weatherapi.com/v1/forecast.json',
             {
@@ -61,10 +66,9 @@ router.get('/forecast', async (req, res) => {
         );
 
         const data = response.data;
-        const current = data.current;
-        const location = data.location;
+        const { location, current } = data;
 
-        // 👉 INSERT VÀO RDS (CHỖ QUAN TRỌNG NHẤT)
+        // ✅ INSERT DB
         const sql = `
             INSERT INTO weather (city, temperature, humidity, description)
             VALUES (?, ?, ?, ?)
@@ -90,12 +94,12 @@ router.get('/forecast', async (req, res) => {
         // Cache Redis
         await redisClient.setEx(key, 600, JSON.stringify(data));
         console.log('→ Redis Cache MISS:', key);
-        logQuery('forecast', dataObj, false);
+        logQuery('forecast', logData, false);
 
         res.json(data);
 
     } catch (err) {
-        console.error('Lỗi lấy dự báo thời tiết:', err);
+        console.error('❌ Forecast error:', err);
         res.status(500).json({ error: 'Không thể lấy dữ liệu thời tiết' });
     }
 });
@@ -141,20 +145,9 @@ router.get('/geocode', async (req, res) => {
         res.status(404).json({ error: 'Không tìm thấy thành phố' });
 
     } catch (err) {
-        console.error('Lỗi geocode:', err);
+        console.error('❌ Geocode error:', err);
         res.status(500).json({ error: 'Lỗi truy vấn API thời tiết' });
     }
 });
-const insertSql = `
-  INSERT INTO weather (city, temperature, humidity, description)
-  VALUES (?, ?, ?, ?)
-`;
-
-db.query(insertSql, [
-  data.location.name,
-  data.current.temp_c,
-  data.current.humidity,
-  data.current.condition.text
-]);
 
 module.exports = router;
