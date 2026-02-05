@@ -103,17 +103,17 @@ router.get('/geocode', async (req, res) => {
 });
 
 router.post("/save", (req, res) => {
-  const { city, temperature, humidity, description } = req.body;
+const { city, temperature, humidity, description } = req.body;
 
-  const sql = `
+const sql = `
     INSERT INTO weather (city, temperature, humidity, description)
     VALUES (?, ?, ?, ?)
-  `;
+`;
 
-  db.query(sql, [city, temperature, humidity, description], (err) => {
+db.query(sql, [city, temperature, humidity, description], (err) => {
     if (err) return res.status(500).json(err);
     res.json({ message: "Saved to RDS" });
-  });
+});
 });
 
 module.exports = router;
