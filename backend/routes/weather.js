@@ -145,5 +145,16 @@ router.get('/geocode', async (req, res) => {
         res.status(500).json({ error: 'Lỗi truy vấn API thời tiết' });
     }
 });
+const insertSql = `
+  INSERT INTO weather (city, temperature, humidity, description)
+  VALUES (?, ?, ?, ?)
+`;
+
+db.query(insertSql, [
+  data.location.name,
+  data.current.temp_c,
+  data.current.humidity,
+  data.current.condition.text
+]);
 
 module.exports = router;
