@@ -67,7 +67,29 @@ router.get('/forecast', async (req, res) => {
 
         const data = response.data;
         const { location, current } = data;
+        const weatherData = response.data;
 
+const city = weatherData.location.name;
+const temperature = weatherData.current.temp_c;
+const humidity = weatherData.current.humidity;
+const description = weatherData.current.condition.text;
+
+const insertSql = `
+  INSERT INTO weather (city, temperature, humidity, description)
+  VALUES (?, ?, ?, ?)
+`;
+
+db.query(
+  insertSql,
+  [city, temperature, humidity, description],
+  (err, result) => {
+    if (err) {
+      console.error('❌ MySQL INSERT ERROR:', err);
+    } else {
+      console.log('✅ Inserted weather id:', result.insertId);
+    }
+  }
+);
         // ✅ INSERT DB
         const sql = `
             INSERT INTO weather (city, temperature, humidity, description)
